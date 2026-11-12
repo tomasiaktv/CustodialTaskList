@@ -1,0 +1,51 @@
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build and publish output
+**/bin/
+**/obj/
+publish/
+Publish/
+**/PublishProfiles/*.pubxml.user
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Supervisor configuration and authentication keys
+supervisor.settings.json
+DataProtectionKeys/
+**/DataProtectionKeys/
+**/keys/
+
+# Development secrets and environment files
+.env
+.env.*
+secrets.json
+appsettings.Development.local.json
+appsettings.Production.json
+appsettings.*.local.json
+
+# Logs and temporary files
+logs/
+*.log
+*.tmp
+*.bak
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local deployment folders
+CustodialTaskList_Publish/
+CustodialTaskList_Backup/
+CustodialTaskList_Data/
+CustodialTaskList_Config/

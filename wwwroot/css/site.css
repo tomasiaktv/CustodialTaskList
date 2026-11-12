@@ -1,0 +1,250 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+
+/* Custodial Task Manager */
+
+body {
+    background-color: #f4f6f9;
+}
+
+.card {
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.card-body {
+    padding: 22px;
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.keyboard-key {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 2px;
+    font-size: 16px;
+    font-weight: bold;
+    touch-action: manipulation;
+}
+
+#employeeInitials {
+    font-size: 28px;
+    letter-spacing: 6px;
+    font-weight: bold;
+}
+
+#virtualKeyboard {
+    width: 100%;
+}
+
+
+/* Portrait kiosk layout */
+
+body {
+    background-color: #f4f6f9;
+}
+
+.container {
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#currentDate {
+    font-size: 16px;
+    font-weight: 500;
+    text-align: right;
+}
+
+#taskList .card {
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+#taskList .card-body {
+    min-height: 100px;
+    padding: 20px;
+}
+
+#taskList .btn {
+    min-height: 48px;
+}
+
+/* Narrow portrait screens */
+
+@media (max-width: 600px) {
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+        .container > .d-flex:first-child {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 10px;
+        }
+
+    #currentDate {
+        text-align: left;
+    }
+
+    .container > .mb-4 {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .container > .mb-4 button {
+            width: 100%;
+            margin: 0 !important;
+            min-height: 52px;
+        }
+
+    #taskList .card-body {
+        gap: 12px;
+    }
+
+    .keyboard-key {
+        font-size: 14px;
+        padding: 10px 1px;
+    }
+
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+
+/* ====================================
+   ADMIN TOUCHSCREEN KEYBOARD
+   ==================================== */
+
+
+/* Floating Admin Keyboard */
+.admin-virtual-keyboard {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    bottom: auto;
+    transform: none;
+    width: 90vw;
+    max-width: 500px;
+    background-color: #e9ecef;
+    border: 2px solid #6c757d;
+    border-radius: 12px;
+    padding: 12px;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+
+
+    /* Draggable keyboard header */
+    .admin-virtual-keyboard .keyboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ced4da;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+    }
+
+    .admin-virtual-keyboard
+    .keyboard-header:active {cursor: grabbing;}
+
+    /* Container for keyboard keys */
+    .admin-virtual-keyboard .keyboard-keys {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* Each keyboard row */
+    .admin-virtual-keyboard .keyboard-row {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    /* Individual touchscreen keys */
+    .admin-virtual-keyboard .keyboard-key {
+        flex: 1;
+        min-height: 55px;
+        padding: 8px 3px;
+        font-size: 20px;
+        font-weight: 500;
+        background-color: white;
+        color: #212529;
+        border: 1px solid #adb5bd;
+        border-radius: 6px;
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+
+        /* Visual feedback when pressing a key */
+        .admin-virtual-keyboard .keyboard-key:active {
+            background-color: #cfe2ff;
+        }
+
+    /* Wider spacebar */
+    .admin-virtual-keyboard .keyboard-space {
+        flex: 4;
+    }
+
+    /* Special keys */
+    .admin-virtual-keyboard .keyboard-special {
+        background-color: #ced4da;
+    }
+
+/* Keep the keyboard usable on smaller screens */
+@media (max-width: 600px) {
+    .admin-virtual-keyboard {
+        width: 90vw;
+        max-width: 500px;
+        padding: 8px;
+    }
+}
+
+        .admin-virtual-keyboard .keyboard-key {
+            min-height: 45px;
+            font-size: 16px;
+            padding: 5px 2px;
+        }
+}

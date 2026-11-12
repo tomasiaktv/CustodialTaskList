@@ -1,0 +1,529 @@
+﻿
+@page "/Admin/Dashboard"
+@model CustodialTaskList.Pages.Admin.IndexModel
+
+@{
+    ViewData["Title"] = "Supervisor Dashboard";
+    string[] days = {
+        "Sunday", "Monday", "Tuesday",
+        "Wednesday", "Thursday", "Friday", "Saturday"
+    };
+}
+
+<div class="container mt-4" style="max-width:1000px">
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
+        <div>
+            <h2>Supervisor Dashboard</h2>
+            <p class="text-muted">
+                Weekly Custodial Schedule
+            </p>
+        </div>
+
+        <form method="post" asp-page-handler="Logout">
+            <button class="btn btn-outline-secondary">
+                Sign Out
+            </button>
+        </form>
+    </div>
+
+    <h5>Select Weekday</h5>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        @for (int day = 1; day <= 5; day++)
+        {
+            <a asp-page="/Admin/Index"
+               asp-route-day="@day"
+               class="btn @(Model.Day == day
+                   ? "btn-primary"
+                   : "btn-outline-primary")">
+                @days[day]
+            </a>
+        }
+    </div>
+
+    <h4>@Model.DayName Tasks</h4>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info">
+            @Model.Message
+        </div>
+    }
+
+    @if (!Model.Tasks.Any())
+    {
+        <div class="alert alert-secondary">
+            No tasks scheduled for this day.
+        </div>
+    }
+
+    @foreach (var task in Model.Tasks)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <form method="post"
+                      asp-page-handler="Save">
+
+                    <input type="hidden"
+                           name="id" value="@task.Id" />
+
+                    <input type="hidden"
+                           name="day" value="@Model.Day" />
+
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-7">
+                            <label class="form-label">
+                                Task Name
+                            </label>
+                            <input name="taskName"
+                                   value="@task.TaskName"
+                                   maxlength="150"
+                                   required
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">
+                                Shift
+                            </label>
+                            <select name="shift"
+                                    class="form-select">
+                                <option value="Morning"
+                                    selected="@(task.Shift == "Morning")">
+                                    Morning
+                                </option>
+                                <option value="Evening"
+                                    selected="@(task.Shift == "Evening")">
+                                    Evening
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button type="submit"
+                                    class="btn btn-success w-100">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="post"
+                      asp-page-handler="Delete"
+                      class="mt-2"
+                      onsubmit="return confirm('Remove this recurring task?');">
+                    <input type="hidden" name="id"
+                           value="@task.Id" />
+                    <input type="hidden" name="day"
+                           value="@Model.Day" />
+
+                    <button class="btn btn-outline-danger btn-sm"
+                            type="submit">
+                        Remove Task
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <hr class="my-4" />
+
+    <h4>Add Task to @Model.DayName</h4>
+
+    <form method="post" asp-page-handler="Save"
+          class="card p-3">
+
+        <input type="hidden" name="id" value="0" />
+        <input type="hidden" name="day"
+               value="@Model.Day" />
+
+        <div class="mb-3">
+            <label class="form-label">Task Name</label>
+            <input name="taskName"
+                   class="form-control admin-keyboard-input"
+                   maxlength="150"
+                   required
+                   placeholder="Example: Clean Main Lobby" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Shift</label>
+            <select name="shift" class="form-select">
+                <option value="Morning">
+                    Morning (6 AM - 2 PM)
+                </option>
+                <option value="Evening">
+                    Evening (2 PM - 10 PM)
+                </option>
+            </select>
+        </div>
+
+        
+    <div class="mb-3">
+        <label class="form-label fw-bold">
+            Select Days of the Week
+        </label>
+
+        <div class="row">
+            @{
+                string[] weekDays =
+                {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+            }
+
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="selectedDays"
+                               value="@(i + 1)"
+                               id="day-@(i + 1)" />
+
+                        <label class="form-check-label"
+                               for="day-@(i + 1)">
+                            @weekDays[i]
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-bold">
+            Repeating Task
+        </label>
+
+        <div class="form-check">
+            <input class="form-check-input"
+                   type="checkbox"
+                   id="isRepeating"
+                   name="isRepeating"
+                   value="true" />
+
+            <label class="form-check-label"
+                   for="isRepeating">
+                Repeat this task
+            </label>
+        </div>
+    </div>
+
+    <div class="mb-3" id="frequencySection"
+         style="display: none;">
+
+        <label for="repeatFrequency"
+               class="form-label fw-bold">
+            Repeat Frequency
+        </label>
+
+        <select class="form-select"
+                id="repeatFrequency"
+                name="repeatFrequency">
+
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+            <option value="Quarterly">Quarterly</option>
+            <option value="SemiAnnually">Semi-Annually</option>
+            <option value="Annually">Annually</option>
+
+        </select>
+    </div>
+
+    
+    <div class="mb-3">
+        <label for="startDate"
+               class="form-label fw-bold">
+            Task Start Date
+        </label>
+
+        <input type="date"
+               id="startDate"
+               name="startDate"
+               class="form-control"
+               value="@DateTime.Today.ToString("yyyy-MM-dd")"
+               required />
+
+        <small class="form-text text-muted">
+            Select the date when this task
+            should begin.
+        </small>
+    </div>
+
+
+        <button type="submit"
+                class="btn btn-primary">
+            Add Task
+        </button>
+    </form>
+
+    
+<hr class="my-5" />
+
+<h4 class="mb-3">Task History</h4>
+
+<p class="text-muted">
+    View tasks from previous days, including
+    completed and incomplete tasks.
+</p>
+
+@if (!Model.TaskHistory.Any())
+{
+    <div class="alert alert-secondary">
+        No task history is available yet.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Task Name</th>
+                    <th>Shift</th>
+                    <th>Status</th>
+                    <th>Completed By</th>
+                    <th>Completion Time</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var task in Model.TaskHistory)
+                {
+                    <tr>
+                        <td>
+                            @task.ScheduledDate.ToString("MM/dd/yyyy")
+                        </td>
+
+                        <td>@task.TaskName</td>
+
+                        <td>@task.Shift</td>
+
+                        <td>
+                            @if (task.IsCompleted)
+                            {
+                                <span class="badge bg-success">
+                                    Completed
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Incomplete
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+                            @(task.CompletedByInitials ?? "—")
+                        </td>
+
+                        <td>
+                            @if (task.CompletedAt.HasValue)
+                            {
+                                @task.CompletedAt.Value.ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<hr class="my-5" />
+
+<div class="card border-danger mb-4">
+    <div class="card-body">
+
+        <h4 class="text-danger">
+            Task Management
+        </h4>
+
+        <p class="text-muted">
+            Remove all active tasks from the custodial
+            schedule. Task history will be preserved.
+        </p>
+
+        <form method="post"
+              asp-page-handler="RemoveAll"
+              onsubmit="return confirm(
+            'Are you sure you want to remove ALL active tasks?'
+            );">
+
+            <input type="hidden"
+                   name="day"
+                   value="@Model.Day" />
+
+            <button type="submit"
+                    class="btn btn-danger">
+                Remove All Active Tasks
+            </button>
+
+        </form>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const repeatCheckbox =
+            document.getElementById("isRepeating");
+
+        const frequencySection =
+            document.getElementById("frequencySection");
+
+        repeatCheckbox.addEventListener("change", function () {
+
+            if (repeatCheckbox.checked) {
+                frequencySection.style.display = "block";
+            } else {
+                frequencySection.style.display = "none";
+            }
+
+        });
+
+    });
+</script>
+ 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const startDateInput =
+            document.getElementById("startDate");
+
+        const repeatCheckbox =
+            document.getElementById("isRepeating");
+
+        const weekdayCheckboxes = Array.from(
+            document.querySelectorAll(
+                'input[name="selectedDays"]'
+            )
+        );
+
+        if (!startDateInput || !repeatCheckbox) {
+            return;
+        }
+
+        // Remember manually selected repeating days.
+        let savedDays = [];
+
+        function updateWeekdaySelection() {
+
+            if (repeatCheckbox.checked) {
+
+                // Allow multiple weekday selections.
+                weekdayCheckboxes.forEach(box => {
+                    box.disabled = false;
+
+                    box.checked =
+                        savedDays.includes(box.value);
+
+                    box.closest(".form-check")
+                        ?.classList.remove(
+                            "bg-primary-subtle",
+                            "border",
+                            "border-primary",
+                            "rounded",
+                            "p-2"
+                        );
+                });
+
+            } else {
+
+                // Get the weekday from the start date.
+                const selectedDate = startDateInput.value;
+
+                const weekday = selectedDate
+                    ? new Date(selectedDate + "T12:00:00")
+                        .getDay()
+                    : -1;
+
+                weekdayCheckboxes.forEach(box => {
+
+                    const matchesDate =
+                        Number(box.value) === weekday;
+
+                    // Automatically select the correct day.
+                    box.checked = matchesDate;
+
+                    // Prevent manual changes for one-time tasks.
+                    box.disabled = true;
+
+                    // Highlight the selected weekday.
+                    const container =
+                        box.closest(".form-check");
+
+                    container?.classList.toggle(
+                        "bg-primary-subtle",
+                        matchesDate
+                    );
+
+                    container?.classList.toggle(
+                        "border",
+                        matchesDate
+                    );
+
+                    container?.classList.toggle(
+                        "border-primary",
+                        matchesDate
+                    );
+
+                    container?.classList.toggle(
+                        "rounded",
+                        matchesDate
+                    );
+
+                    container?.classList.toggle(
+                        "p-2",
+                        matchesDate
+                    );
+                });
+            }
+        }
+
+        // Update when the administrator changes the date.
+        startDateInput.addEventListener(
+            "change",
+            updateWeekdaySelection
+        );
+
+        // Update when repeating is enabled or disabled.
+        repeatCheckbox.addEventListener("change", () => {
+
+            if (!repeatCheckbox.checked) {
+                savedDays = weekdayCheckboxes
+                    .filter(box => box.checked)
+                    .map(box => box.value);
+            }
+
+            updateWeekdaySelection();
+        });
+
+        // Remember changes to repeating weekdays.
+        weekdayCheckboxes.forEach(box => {
+            box.addEventListener("change", () => {
+                if (repeatCheckbox.checked) {
+                    savedDays = weekdayCheckboxes
+                        .filter(day => day.checked)
+                        .map(day => day.value);
+                }
+            });
+        });
+
+        // Set the correct weekday when the page opens.
+        updateWeekdaySelection();
+
+    });
+</script>

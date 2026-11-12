@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../SupervisorPasswordGenerator/SupervisorPasswordGenerator.csproj" Id="abaf12d7-e967-4473-8dc4-4e9b7dd3e3f7" />
+  <Project Path="CustodialTaskList.csproj" />
+</Solution>

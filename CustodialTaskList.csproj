@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>6d90ba50-4200-40f4-9a3c-a3eac610ccf1</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+	  
+  </ItemGroup>
+
+	<ItemGroup>
+		<!-- Never publish the development SQLite database -->
+		<Content Remove="custodialtasks.db" />
+
+		<None Update="custodialtasks.db"
+			  CopyToPublishDirectory="Never" />
+
+		<!-- Exclude SQLite temporary files -->
+		<Content Remove="custodialtasks.db-wal" />
+		<Content Remove="custodialtasks.db-shm" />
+
+		<None Update="custodialtasks.db-wal;custodialtasks.db-shm"
+			  CopyToPublishDirectory="Never" />
+	</ItemGroup>
+	
+</Project>
