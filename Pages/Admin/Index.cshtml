@@ -63,6 +63,32 @@
         <div class="card mb-3">
             <div class="card-body">
 
+            <div class="mb-3">
+                @if (task.IsRepeating)
+                {
+                    <span class="badge bg-primary">
+                        Repeating — @(task.RepeatFrequency == "SemiAnnually"
+                                        ? "Semi-Annually"
+                                        : task.RepeatFrequency)
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">
+                        One-Time Task
+                    </span>
+
+                    <span class="text-muted ms-2">
+                        Scheduled: @task.StartDate.ToString("MMMM d, yyyy")
+                    </span>
+                }
+            </div>
+
+            <div class="text-muted small mb-3">
+                <strong>Scheduled Day:</strong>
+                @days[task.DayOfWeek]
+            </div>
+
                 <form method="post"
                       asp-page-handler="Save">
 
@@ -130,7 +156,7 @@
 
     <hr class="my-4" />
 
-    <h4>Add Task to @Model.DayName</h4>
+    <h4>Add New Task</h4>
 
     <form method="post" asp-page-handler="Save"
           class="card p-3">
