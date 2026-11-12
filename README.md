@@ -324,23 +324,23 @@ CustodialTaskList uses a server-side web architecture with client-side JavaScrip
 
 
 
-\*\*Frontend:\*\* Razor Pages, HTML, CSS, Bootstrap, and JavaScript provide the user interface.
+**Frontend:** Razor Pages, HTML, CSS, Bootstrap, and JavaScript provide the user interface.
 
 
 
-\*\*Backend:\*\* ASP.NET Core handles application requests, scheduling logic, task management, and database operations.
+**Backend:** ASP.NET Core handles application requests, scheduling logic, task management, and database operations.
 
 
 
-\*\*Database:\*\* SQLite stores task definitions and completion information.
+**Database:** SQLite stores task definitions and completion information.
 
 
 
-\*\*Hosting:\*\* IIS hosts the application on a Windows computer, allowing the kiosk browser to communicate with the locally hosted application.
+**Hosting:** IIS hosts the application on a Windows computer, allowing the kiosk browser to communicate with the locally hosted application.
 
 
 
-\*\*Client Updates:\*\* JavaScript periodically requests updated task information, allowing the interface to reflect database changes without requiring a full-page refresh.
+**Client Updates:** JavaScript periodically requests updated task information, allowing the interface to reflect database changes without requiring a full-page refresh.
 
 
 
@@ -426,27 +426,27 @@ Several design decisions were made specifically for a workplace touchscreen envi
 
 
 
-\*\*Accessibility:\*\* Large controls and clear labels simplify interaction for employees with varying levels of technical experience.
+**Accessibility:** Large controls and clear labels simplify interaction for employees with varying levels of technical experience.
 
 
 
-\*\*Reliability:\*\* Persistent database storage and automatic browser startup help maintain consistent availability.
+**Reliability:** Persistent database storage and automatic browser startup help maintain consistent availability.
 
 
 
-\*\*Maintainability:\*\* Recurring task schedules reduce the need for supervisors to manually update daily responsibilities.
+**Maintainability:** Recurring task schedules reduce the need for supervisors to manually update daily responsibilities.
 
 
 
-\*\*Hardware Reuse:\*\* The application provides a practical use for an existing touchscreen computer that would otherwise remain unused.
+**Hardware Reuse:** The application provides a practical use for an existing touchscreen computer that would otherwise remain unused.
 
 
 
-\*\*Security:\*\* A separate administration interface and password hashing protect supervisory functions.
+**Security:** A separate administration interface and password hashing protect supervisory functions.
 
 
 
-\*\*Usability:\*\* On-screen keyboards allow the application to operate without a physical keyboard during normal use.
+**Usability:** On-screen keyboards allow the application to operate without a physical keyboard during normal use.
 
 
 
@@ -484,7 +484,7 @@ Potential future enhancements include:
 
 
 
-\*\*Status: Deployed and Operational\*\*
+**Status: Deployed and Operational**
 
 
 
@@ -546,7 +546,7 @@ The goal was to create a useful, maintainable application while gaining hands-on
 
 
 
-\*\*Ian Tomasiak\*\*
+**Ian Tomasiak**
 
 
 
