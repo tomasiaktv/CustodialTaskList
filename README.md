@@ -1,8 +1,8 @@
-\# CustodialTaskList
+# CustodialTaskList
 
 
 
-\### A Touchscreen-Friendly Custodial Task Management System
+### A Touchscreen-Friendly Custodial Task Management System
 
 
 
@@ -18,11 +18,11 @@ Originally developed as a practical solution for a workplace environment, the ap
 
 
 
-\---
+---
 
 
 
-\## Project Overview
+## Project Overview
 
 
 
@@ -38,55 +38,55 @@ Supervisors can manage scheduled tasks through a separate password-protected adm
 
 
 
-\### Project Goals
+### Project Goals
 
 
 
-\- Replace paper-based custodial task schedules.
+- Replace paper-based custodial task schedules.
 
-\- Provide a clear, interactive daily task list.
+- Provide a clear, interactive daily task list.
 
-\- Support morning and evening work shifts.
+- Support morning and evening work shifts.
 
-\- Allow employees to record task completion using their initials.
+- Allow employees to record task completion using their initials.
 
-\- Maintain completion records in a persistent database.
+- Maintain completion records in a persistent database.
 
-\- Reduce repetitive administrative work through automated scheduling.
+- Reduce repetitive administrative work through automated scheduling.
 
-\- Repurpose existing hardware instead of purchasing a dedicated kiosk system.
-
-
-
-\---
+- Repurpose existing hardware instead of purchasing a dedicated kiosk system.
 
 
 
-\## Features
+---
 
 
 
-\### Daily Task Management
+## Features
 
 
 
-\- Displays tasks scheduled for the current day.
-
-\- Separates responsibilities into Morning and Evening shifts.
-
-\- Automatically selects the appropriate shift based on local time.
-
-\- Allows employees to switch between shifts manually.
-
-\- Displays task completion status and employee initials.
-
-\- Provides an option to undo accidental task completions.
-
-\- Shows a completion counter for each shift.
+### Daily Task Management
 
 
 
-\### Automated Scheduling
+- Displays tasks scheduled for the current day.
+
+- Separates responsibilities into Morning and Evening shifts.
+
+- Automatically selects the appropriate shift based on local time.
+
+- Allows employees to switch between shifts manually.
+
+- Displays task completion status and employee initials.
+
+- Provides an option to undo accidental task completions.
+
+- Shows a completion counter for each shift.
+
+
+
+### Automated Scheduling
 
 
 
@@ -94,17 +94,17 @@ Supervisors can configure tasks using several scheduling options:
 
 
 
-\- One-time tasks
+- One-time tasks
 
-\- Weekly tasks
+- Weekly tasks
 
-\- Monthly tasks
+- Monthly tasks
 
-\- Quarterly tasks
+- Quarterly tasks
 
-\- Semiannual tasks
+- Semiannual tasks
 
-\- Annual tasks
+- Annual tasks
 
 
 
@@ -112,7 +112,7 @@ Weekly tasks can be assigned to specific weekdays, allowing recurring schedules 
 
 
 
-\### Supervisor Administration
+### Supervisor Administration
 
 
 
@@ -120,17 +120,17 @@ A password-protected administration interface allows authorized supervisors to:
 
 
 
-\- Create and manage custodial tasks.
+- Create and manage custodial tasks.
 
-\- Assign tasks to specific shifts.
+- Assign tasks to specific shifts.
 
-\- Configure recurring schedules.
+- Configure recurring schedules.
 
-\- Review task completion history.
+- Review task completion history.
 
-\- Deactivate active tasks.
+- Deactivate active tasks.
 
-\- Manage the daily task schedule.
+- Manage the daily task schedule.
 
 
 
@@ -138,7 +138,7 @@ Supervisor credentials are protected using password hashing rather than plaintex
 
 
 
-\### Touchscreen Support
+### Touchscreen Support
 
 
 
@@ -150,21 +150,21 @@ Features include:
 
 
 
-\- Large, accessible buttons.
+- Large, accessible buttons.
 
-\- Responsive layouts.
+- Responsive layouts.
 
-\- Touchscreen-friendly task completion controls.
+- Touchscreen-friendly task completion controls.
 
-\- On-screen keyboard for entering employee initials.
+- On-screen keyboard for entering employee initials.
 
-\- Draggable virtual keyboard for administrative input.
+- Draggable virtual keyboard for administrative input.
 
-\- Simplified navigation.
+- Simplified navigation.
 
 
 
-\### Automatic Updates
+### Automatic Updates
 
 
 
@@ -192,7 +192,7 @@ The application also automatically switches between scheduled shifts:
 
 
 
-\### Kiosk Deployment
+### Kiosk Deployment
 
 
 
@@ -204,19 +204,19 @@ The deployment uses:
 
 
 
-\- Internet Information Services (IIS)
+- Internet Information Services (IIS)
 
-\- ASP.NET Core Hosting Bundle
+- ASP.NET Core Hosting Bundle
 
-\- Microsoft Edge kiosk mode
+- Microsoft Edge kiosk mode
 
-\- Windows Assigned Access
+- Windows Assigned Access
 
-\- Automatic kiosk account sign-in
+- Automatic kiosk account sign-in
 
-\- Windows Bubbles screen saver
+- Windows Bubbles screen saver
 
-\- Persistent SQLite database storage
+- Persistent SQLite database storage
 
 
 
@@ -224,11 +224,11 @@ The kiosk launches the application automatically after startup, providing a dedi
 
 
 
-\---
+---
 
 
 
-\## Technologies Used
+## Technologies Used
 
 
 
@@ -262,29 +262,29 @@ The kiosk launches the application automatically after startup, providing a dedi
 
 
 
-\---
+---
 
 
 
-\## Application Workflow
+## Application Workflow
 
 
 
-\### Employee Workflow
+### Employee Workflow
 
 
 
-1\. Open the application on the touchscreen kiosk.
+1. Open the application on the touchscreen kiosk.
 
-2\. View the currently scheduled shift and daily responsibilities.
+2. View the currently scheduled shift and daily responsibilities.
 
-3\. Select \*\*Complete\*\* for a finished task.
+3. Select \*\*Complete\*\* for a finished task.
 
-4\. Enter employee initials using the on-screen keyboard.
+4. Enter employee initials using the on-screen keyboard.
 
-5\. Submit the completion.
+5. Submit the completion.
 
-6\. View the updated completion status.
+6. View the updated completion status.
 
 
 
@@ -292,31 +292,31 @@ If a task is completed accidentally, the employee can use the Undo Completion op
 
 
 
-\### Supervisor Workflow
+### Supervisor Workflow
 
 
 
-1\. Navigate to the administration page.
+1. Navigate to the administration page.
 
-2\. Authenticate using the supervisor password.
+2. Authenticate using the supervisor password.
 
-3\. Create a new task.
+3. Create a new task.
 
-4\. Assign the task to a shift.
+4. Assign the task to a shift.
 
-5\. Configure its start date and recurrence schedule.
+5. Configure its start date and recurrence schedule.
 
-6\. Save the task.
+6. Save the task.
 
-7\. Review the task list and completion history.
-
-
-
-\---
+7. Review the task list and completion history.
 
 
 
-\## Application Architecture
+---
+
+
+
+## Application Architecture
 
 
 
@@ -344,11 +344,11 @@ CustodialTaskList uses a server-side web architecture with client-side JavaScrip
 
 
 
-\---
+---
 
 
 
-\## Development and Deployment
+## Development and Deployment
 
 
 
@@ -368,23 +368,23 @@ The production environment stores operational data and supervisor settings separ
 
 
 
-\### Requirements
+### Requirements
 
 
 
-\- .NET 10 SDK for development
+- .NET 10 SDK for development
 
-\- Visual Studio with ASP.NET and web development tools, or another compatible .NET development environment
+- Visual Studio with ASP.NET and web development tools, or another compatible .NET development environment
 
-\- SQLite database support
+- SQLite database support
 
-\- A modern web browser
+- A modern web browser
 
-\- IIS and the ASP.NET Core Hosting Bundle for the Windows IIS deployment scenario
+- IIS and the ASP.NET Core Hosting Bundle for the Windows IIS deployment scenario
 
 
 
-\### Security and Configuration
+### Security and Configuration
 
 
 
@@ -396,17 +396,17 @@ The following production resources are not included:
 
 
 
-\- Operational SQLite databases
+- Operational SQLite databases
 
-\- Employee task-completion records
+- Employee task-completion records
 
-\- Supervisor password configuration
+- Supervisor password configuration
 
-\- Authentication keys
+- Authentication keys
 
-\- Production-specific network settings
+- Production-specific network settings
 
-\- Environment-specific secrets
+- Environment-specific secrets
 
 
 
@@ -414,11 +414,11 @@ Deployment environments must supply their own configuration and initialize their
 
 
 
-\---
+---
 
 
 
-\## Design Considerations
+## Design Considerations
 
 
 
@@ -450,11 +450,11 @@ Several design decisions were made specifically for a workplace touchscreen envi
 
 
 
-\---
+---
 
 
 
-\## Future Improvements
+## Future Improvements
 
 
 
@@ -462,25 +462,25 @@ Potential future enhancements include:
 
 
 
-\- Secure HTTPS access using an internal network hostname.
+- Secure HTTPS access using an internal network hostname.
 
-\- Access from authorized devices on the organization's local network.
+- Access from authorized devices on the organization's local network.
 
-\- Additional administrative reporting.
+- Additional administrative reporting.
 
-\- Task completion summaries and statistics.
+- Task completion summaries and statistics.
 
-\- Improved filtering and searching of historical task records.
+- Improved filtering and searching of historical task records.
 
-\- Additional scheduling and notification capabilities.
-
-
-
-\---
+- Additional scheduling and notification capabilities.
 
 
 
-\## Project Status
+---
+
+
+
+## Project Status
 
 
 
@@ -496,11 +496,11 @@ Additional network configuration and enhancements are planned.
 
 
 
-\---
+---
 
 
 
-\## About This Project
+## About This Project
 
 
 
@@ -512,25 +512,25 @@ The project demonstrates experience with:
 
 
 
-\- Full-stack web application development
+- Full-stack web application development
 
-\- C# and ASP.NET Core
+- C# and ASP.NET Core
 
-\- Relational database integration
+- Relational database integration
 
-\- JavaScript and interactive user interfaces
+- JavaScript and interactive user interfaces
 
-\- Authentication and application security
+- Authentication and application security
 
-\- Recurring scheduling logic
+- Recurring scheduling logic
 
-\- Windows application deployment
+- Windows application deployment
 
-\- IIS configuration
+- IIS configuration
 
-\- Touchscreen kiosk implementation
+- Touchscreen kiosk implementation
 
-\- Practical software troubleshooting
+- Practical software troubleshooting
 
 
 
@@ -538,11 +538,11 @@ The goal was to create a useful, maintainable application while gaining hands-on
 
 
 
-\---
+---
 
 
 
-\## Author
+## Author
 
 
 
