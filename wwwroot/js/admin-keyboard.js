@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 insertText(" ");
                 return;
 
-            case "Backspace": {
+            case "Del": {
                 const start = activeInput.selectionStart;
                 const end = activeInput.selectionEnd;
 
