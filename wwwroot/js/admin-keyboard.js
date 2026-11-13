@@ -343,5 +343,28 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+    // Allow the Admin keyboard to work
+    // inside Bootstrap Edit Task modals.
+
+    const keyboardHome = keyboard.parentElement;
+
+    document.querySelectorAll(".modal").forEach(modal => {
+
+        // Move keyboard inside the popup when opened.
+        modal.addEventListener("show.bs.modal", () => {
+            keyboardHome.contains(keyboard) &&
+                hideKeyboard();
+
+            modal.appendChild(keyboard);
+        });
+
+        // Restore keyboard when popup closes.
+        modal.addEventListener("hidden.bs.modal", () => {
+            hideKeyboard();
+            keyboardHome.appendChild(keyboard);
+        });
+
+    });
+
     closeButton.addEventListener("click", hideKeyboard);
 });

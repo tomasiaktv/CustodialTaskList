@@ -247,4 +247,37 @@ body {
             font-size: 16px;
             padding: 5px 2px;
         }
+
+/* ====================================
+   ADMIN EDIT TASK POPUP
+   ==================================== */
+
+/* Give the Edit Task popup room to scroll. */
+.modal-dialog-scrollable .modal-content {
+    max-height: 90dvh;
+}
+
+/* Keep form contents comfortably spaced. */
+.modal-body {
+    padding: 20px;
+}
+
+    /* Allow space when the touchscreen keyboard opens. */
+    .modal-body:has(.admin-virtual-keyboard:not([style*="display: none"])) {
+        padding-bottom: 300px;
+    }
+
+/* Optimize the Edit Task popup for portrait screens. */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .modal-dialog-scrollable .modal-content {
+        max-height: 95dvh;
+    }
 }

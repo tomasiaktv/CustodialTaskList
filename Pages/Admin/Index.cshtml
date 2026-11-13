@@ -44,6 +44,25 @@
 
     <h4>@Model.DayName Tasks</h4>
 
+<!-- Admin shift selection -->
+<div class="btn-group w-100 mb-4"
+     role="group"
+     aria-label="Select task shift">
+
+    <button type="button"
+            id="adminMorningBtn"
+            class="btn btn-primary">
+        Morning
+    </button>
+
+    <button type="button"
+            id="adminEveningBtn"
+            class="btn btn-outline-primary">
+        Evening
+    </button>
+
+</div>
+
     @if (!string.IsNullOrEmpty(Model.Message))
     {
         <div class="alert alert-info">
@@ -60,34 +79,113 @@
 
     @foreach (var task in Model.Tasks)
     {
-        <div class="card mb-3">
+
+    <div class="card mb-3 admin-task-card" data-shift="@task.Shift">
+
             <div class="card-body">
+            <div class="d-flex justify-content-between
+                align-items-center mb-2">
 
-            <div class="mb-3">
-                @if (task.IsRepeating)
-                {
-                    <span class="badge bg-primary">
-                        Repeating — @(task.RepeatFrequency == "SemiAnnually"
-                                        ? "Semi-Annually"
-                                        : task.RepeatFrequency)
-                    </span>
-                }
-                else
-                {
-                    <span class="badge bg-secondary">
-                        One-Time Task
-                    </span>
+                <h5 class="card-title mb-0">
+                    @task.TaskName
+                </h5>
 
-                    <span class="text-muted ms-2">
-                        Scheduled: @task.StartDate.ToString("MMMM d, yyyy")
-                    </span>
-                }
+                <span class="badge bg-secondary">
+                    @task.Shift
+                </span>
+
             </div>
 
-            <div class="text-muted small mb-3">
-                <strong>Scheduled Day:</strong>
-                @days[task.DayOfWeek]
+
+            
+            <!-- Read-only task schedule summary -->
+            <div class="row g-2 mb-3">
+
+                <div class="col-6">
+                    <small class="text-muted d-block">
+                        Scheduled Day
+                    </small>
+
+                    <strong>@days[task.DayOfWeek]</strong>
+                </div>
+
+                <div class="col-6">
+                    <small class="text-muted d-block">
+                        Repeating
+                    </small>
+
+                    <strong>
+                        @(task.IsRepeating ? "Yes" : "No")
+                    </strong>
+                </div>
+
+                <div class="col-12">
+                    <small class="text-muted d-block">
+                        Frequency
+                    </small>
+
+                    @if (!task.IsRepeating)
+                    {
+                        <strong>One-Time</strong>
+                        <span class="text-muted small">
+                            — @task.StartDate.ToString("MMM d, yyyy")
+                        </span>
+                    }
+                    else
+                    {
+                        <strong>
+                            @(task.RepeatFrequency == "SemiAnnually"
+                                ? "Semi-Annually"
+                                : task.RepeatFrequency)
+                        </strong>
+
+                        @if (!string.IsNullOrEmpty(task.WeekOccurrence))
+                        {
+                            <span class="text-muted">
+                                — @task.WeekOccurrence
+                                @days[task.DayOfWeek]
+                            </span>
+                        }
+                    }
+                </div>
+
             </div>
+
+            <button type="button"
+                    class="btn btn-primary btn-sm mb-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editTaskModal-@task.Id">
+
+                Edit Task
+
+            </button>
+
+            <!-- Edit Task popup -->
+            <div class="modal fade"
+                 id="editTaskModal-@task.Id"
+                 tabindex="-1"
+                 aria-labelledby="editTaskTitle-@task.Id"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg
+                    modal-dialog-scrollable">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="editTaskTitle-@task.Id">
+                                Edit: @task.TaskName
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close">
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
 
                 <form method="post"
                       asp-page-handler="Save">
@@ -107,7 +205,7 @@
                                    value="@task.TaskName"
                                    maxlength="150"
                                    required
-                                   class="form-control" />
+                                   class="form-control admin-keyboard-input" />
                         </div>
 
                         <div class="col-md-3">
@@ -258,6 +356,16 @@
                 </div>
 
                 </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- End Edit Task popup -->
+
 
                 <form method="post"
                       asp-page-handler="Delete"
@@ -810,5 +918,59 @@ else
             // Set the correct display when the page loads.
             updateEditSchedule();
         });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const morningBtn =
+            document.getElementById("adminMorningBtn");
+
+        const eveningBtn =
+            document.getElementById("adminEveningBtn");
+
+        const taskCards =
+            document.querySelectorAll(".admin-task-card");
+
+        function showShift(shift) {
+
+            // Show only cards matching the selected shift.
+            taskCards.forEach(card => {
+                card.style.display =
+                    card.dataset.shift === shift
+                        ? ""
+                        : "none";
+            });
+
+            // Highlight the selected shift button.
+            morningBtn.className =
+                shift === "Morning"
+                    ? "btn btn-primary"
+                    : "btn btn-outline-primary";
+
+            eveningBtn.className =
+                shift === "Evening"
+                    ? "btn btn-primary"
+                    : "btn btn-outline-primary";
+        }
+
+        morningBtn.addEventListener("click", () => {
+            showShift("Morning");
+        });
+
+        eveningBtn.addEventListener("click", () => {
+            showShift("Evening");
+        });
+
+        // Select the current shift when opening the page.
+        const currentHour = new Date().getHours();
+
+        const startingShift =
+            currentHour >= 14 && currentHour < 22
+                ? "Evening"
+                : "Morning";
+
+        showShift(startingShift);
     });
 </script>
