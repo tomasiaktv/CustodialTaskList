@@ -134,6 +134,129 @@
                             </button>
                         </div>
                     </div>
+
+                <div class="mt-3">
+                    <label class="form-label fw-bold">
+                        Scheduled Weekday
+                    </label>
+
+                    <select name="editDayOfWeek"
+                            class="form-select">
+
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <option value="@i"
+                                    selected="@(task.DayOfWeek == i)">
+                                @days[i]
+                            </option>
+                        }
+
+                    </select>
+
+                    <small class="form-text text-muted">
+                        Choose the weekday this task should run.
+                    </small>
+                </div>
+
+                <div class="mt-3">
+                    <label class="form-label fw-bold">
+                        Task Start Date
+                    </label>
+
+                    <input type="date"
+                           name="startDate"
+                           class="form-control"
+                           value="@task.StartDate.ToString("yyyy-MM-dd")"
+                           required />
+
+                    <small class="form-text text-muted">
+                        Change when this task's schedule begins.
+                    </small>
+                </div>
+                <!-- Edit repeating schedule -->
+                <div class="mt-3">
+                    <label class="form-label fw-bold">
+                        Repeating Task
+                    </label>
+
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input edit-repeat"
+                               name="isRepeating"
+                               value="true"
+                               checked="@task.IsRepeating"
+                               id="editRepeat-@task.Id" />
+
+                        <label class="form-check-label"
+                               for="editRepeat-@task.Id">
+                            Repeat this task
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Edit repeat frequency -->
+                <div class="mt-3 edit-frequency-section">
+                    <label class="form-label fw-bold">
+                        Repeat Frequency
+                    </label>
+
+                    <select name="repeatFrequency"
+                            class="form-select edit-frequency">
+
+                        <option value="Weekly"
+                                selected="@(task.RepeatFrequency == "Weekly")">
+                            Weekly
+                        </option>
+
+                        <option value="Monthly"
+                                selected="@(task.RepeatFrequency == "Monthly")">
+                            Monthly
+                        </option>
+
+                        <option value="Quarterly"
+                                selected="@(task.RepeatFrequency == "Quarterly")">
+                            Quarterly
+                        </option>
+
+                        <option value="SemiAnnually"
+                                selected="@(task.RepeatFrequency == "SemiAnnually" ||
+                                            task.RepeatFrequency == "Semi-Annually")">
+                            Semi-Annually
+                        </option>
+
+                        <option value="Annually"
+                                selected="@(task.RepeatFrequency == "Annually")">
+                            Annually
+                        </option>
+
+                    </select>
+                </div>
+
+                <!-- Edit weekday occurrence -->
+                <div class="mt-3 edit-occurrence-section">
+                    <label class="form-label fw-bold">
+                        Week of the Month
+                    </label>
+
+                    <select name="weekOccurrence"
+                            class="form-select edit-occurrence">
+
+                        @foreach (string occurrence in new[] {"First", "Second", "Third", "Fourth", "Last"})
+                        {
+                            <option value="@occurrence"
+                                    selected="@(task.WeekOccurrence == occurrence)">
+                                @occurrence
+                            </option>
+                        }
+
+                    </select>
+
+                    <small class="form-text text-muted">
+                        Used for monthly, quarterly,
+                        semi-annual, and annual schedules.
+                    </small>
+                </div>
+
                 </form>
 
                 <form method="post"
@@ -258,7 +381,33 @@
         </select>
     </div>
 
-    
+    <div class="mb-3"
+         id="weekOccurrenceSection"
+         style="display: none;">
+
+        <label for="weekOccurrence"
+               class="form-label fw-bold">
+            Week of the Month
+        </label>
+
+        <select class="form-select"
+                id="weekOccurrence"
+                name="weekOccurrence">
+
+            <option value="First">First</option>
+            <option value="Second">Second</option>
+            <option value="Third">Third</option>
+            <option value="Fourth">Fourth</option>
+            <option value="Last">Last</option>
+
+        </select>
+
+        <small class="form-text text-muted">
+            Select which occurrence of the checked
+            weekdays the task should run.
+        </small>
+    </div>
+
     <div class="mb-3">
         <label for="startDate"
                class="form-label fw-bold">
@@ -400,7 +549,6 @@ else
   </div>
 </div>
 
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -410,15 +558,53 @@ else
         const frequencySection =
             document.getElementById("frequencySection");
 
-        repeatCheckbox.addEventListener("change", function () {
+        const frequencyDropdown =
+            document.getElementById("repeatFrequency");
 
-            if (repeatCheckbox.checked) {
-                frequencySection.style.display = "block";
-            } else {
-                frequencySection.style.display = "none";
-            }
+        const occurrenceSection =
+            document.getElementById("weekOccurrenceSection");
 
-        });
+        const occurrenceDropdown =
+            document.getElementById("weekOccurrence");
+
+        function updateScheduleOptions() {
+
+            const repeating = repeatCheckbox.checked;
+
+            // Show frequency options for repeating tasks.
+            frequencySection.style.display =
+                repeating ? "block" : "none";
+
+            // These frequencies need a week occurrence.
+            const needsOccurrence = [
+                "Monthly",
+                "Quarterly",
+                "SemiAnnually",
+                "Annually"
+            ].includes(frequencyDropdown.value);
+
+            occurrenceSection.style.display =
+                repeating && needsOccurrence
+                    ? "block"
+                    : "none";
+
+            // Only submit this value when needed.
+            occurrenceDropdown.disabled =
+                !repeating || !needsOccurrence;
+        }
+
+        repeatCheckbox.addEventListener(
+            "change",
+            updateScheduleOptions
+        );
+
+        frequencyDropdown.addEventListener(
+            "change",
+            updateScheduleOptions
+        );
+
+        // Initialize the form when the page loads.
+        updateScheduleOptions();
 
     });
 </script>
@@ -551,5 +737,78 @@ else
         // Set the correct weekday when the page opens.
         updateWeekdaySelection();
 
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Find all Edit Task forms.
+        const editForms = document.querySelectorAll(
+            "form:has(.edit-repeat)"
+        );
+
+        editForms.forEach(form => {
+
+            const repeatCheckbox =
+                form.querySelector(".edit-repeat");
+
+            const frequencySection =
+                form.querySelector(".edit-frequency-section");
+
+            const frequencyDropdown =
+                form.querySelector(".edit-frequency");
+
+            const occurrenceSection =
+                form.querySelector(".edit-occurrence-section");
+
+            const occurrenceDropdown =
+                form.querySelector(".edit-occurrence");
+
+            function updateEditSchedule() {
+
+                const repeating = repeatCheckbox.checked;
+
+                // Show frequency only for repeating tasks.
+                frequencySection.style.display =
+                    repeating ? "block" : "none";
+
+                // Monthly and longer schedules need
+                // a weekday occurrence.
+                const needsOccurrence = [
+                    "Monthly",
+                    "Quarterly",
+                    "SemiAnnually",
+                    "Semi-Annually",
+                    "Annually"
+                ].includes(frequencyDropdown.value);
+
+                occurrenceSection.style.display =
+                    repeating && needsOccurrence
+                        ? "block"
+                        : "none";
+
+                // Prevent unused values from being submitted.
+                frequencyDropdown.disabled = !repeating;
+
+                occurrenceDropdown.disabled =
+                    !repeating || !needsOccurrence;
+            }
+
+            // Respond when the checkbox changes.
+            repeatCheckbox.addEventListener(
+                "change",
+                updateEditSchedule
+            );
+
+            // Respond when the frequency changes.
+            frequencyDropdown.addEventListener(
+                "change",
+                updateEditSchedule
+            );
+
+            // Set the correct display when the page loads.
+            updateEditSchedule();
+        });
     });
 </script>

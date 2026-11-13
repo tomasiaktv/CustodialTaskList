@@ -135,6 +135,15 @@ builder.Services.Configure<ForwardedHeadersOptions>(
 
 var app = builder.Build();
 
+// Apply pending database migrations at startup.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider
+        .GetRequiredService<TaskDbContext>();
+
+    db.Database.Migrate();
+}
+
 // Process trusted proxy headers before
 // HTTPS redirection or authentication.
 app.UseForwardedHeaders();

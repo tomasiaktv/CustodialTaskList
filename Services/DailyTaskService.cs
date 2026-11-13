@@ -16,58 +16,91 @@ public class DailyTaskService
 
     // Determines whether a scheduled task
     // should appear on a specific date.
+
     private static bool ShouldRun(
         TaskTemplate task,
         DateOnly date)
     {
-        // Never display inactive tasks.
+        // Inactive tasks should never appear.
         if (!task.IsActive)
             return false;
 
-        // Must match the selected weekday.
+        // Check that today matches the task's weekday.
         if (task.DayOfWeek != (int)date.DayOfWeek)
             return false;
 
-        // Support older tasks created before
-        // we added repeating schedules.
+        // Compatibility with older task templates.
         if (task.StartDate == default)
-            return true;
+            return task.IsRepeating &&
+                   task.RepeatFrequency == "Weekly";
 
-        // Do not display tasks before their start date.
+        // Never run before the starting date.
         if (date < task.StartDate)
             return false;
 
-        // Non-repeating tasks run only once.
+        // One-time tasks only run on their start date.
         if (!task.IsRepeating)
             return date == task.StartDate;
 
-        // Weekly tasks run every selected weekday.
+        // Weekly tasks remain unchanged.
         if (task.RepeatFrequency == "Weekly")
             return true;
 
-        // Calculate the number of months
-        // since this task was created.
+        // Calculate how many months have passed
+        // since the task's starting month.
         int monthsPassed =
             (date.Year - task.StartDate.Year) * 12
             + date.Month - task.StartDate.Month;
 
-        switch (task.RepeatFrequency)
+        // Determine the frequency interval.
+        int interval = task.RepeatFrequency switch
         {
-            case "Monthly":
-                return true;
+            "Monthly" => 1,
+            "Quarterly" => 3,
+            "SemiAnnually" => 6,
+            "Semi-Annually" => 6,
+            "Annually" => 12,
+            _ => 0
+        };
 
-            case "Quarterly":
-                return monthsPassed % 3 == 0;
+        // Reject unsupported frequencies.
+        if (interval == 0)
+            return false;
 
-            case "SemiAnnually":
-                return monthsPassed % 6 == 0;
+        // Check whether this is a scheduled month.
+        if (monthsPassed < 0 ||
+            monthsPassed % interval != 0)
+            return false;
 
-            case "Annually":
-                return monthsPassed % 12 == 0;
+        // Check which occurrence of the weekday
+        // is scheduled for the current month.
+        return MatchesWeekOccurrence(
+            date,
+            task.WeekOccurrence);
+    }
 
-            default:
-                return false;
-        }
+    private static bool MatchesWeekOccurrence(
+        DateOnly date,
+        string? occurrence)
+    {
+        // Determine whether this is the first,
+        // second, third, or fourth occurrence.
+        int weekNumber = ((date.Day - 1) / 7) + 1;
+
+        // Is there another occurrence of this
+        // weekday seven days later?
+        bool isLast =
+            date.AddDays(7).Month != date.Month;
+
+        return occurrence switch
+        {
+            "First" => weekNumber == 1,
+            "Second" => weekNumber == 2,
+            "Third" => weekNumber == 3,
+            "Fourth" => weekNumber == 4,
+            "Last" => isLast,
+            _ => false
+        };
     }
 
     public async Task<List<DailyTask>> GetTodayAsync(

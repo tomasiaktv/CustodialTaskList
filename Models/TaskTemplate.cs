@@ -21,6 +21,8 @@ namespace CustodialTaskList.Models
 
         public string RepeatFrequency { get; set; } = "Weekly";
 
+        public string? WeekOccurrence { get; set; }
+
         public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
         public bool IsActive { get; set; } = true;

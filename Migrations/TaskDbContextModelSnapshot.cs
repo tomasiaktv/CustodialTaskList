@@ -91,6 +91,9 @@ namespace CustodialTaskList.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("WeekOccurrence")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("TaskTemplates", (string)null);

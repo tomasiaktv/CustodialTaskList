@@ -75,14 +75,16 @@ public class IndexModel : PageModel
     }
 
     public async Task<IActionResult> OnPostSaveAsync(
-        int id,
-        string taskName,
-        string shift,
-        int day,
-        List<int>? selectedDays,
-        bool isRepeating,
-        string? repeatFrequency,
-        DateOnly startDate)
+    int id,
+    string taskName,
+    string shift,
+    int day,
+    List<int>? selectedDays,
+    bool isRepeating,
+    string? repeatFrequency,
+    DateOnly startDate,
+    string? weekOccurrence,
+    int? editDayOfWeek)
 
     {
         // Validate the currently selected dashboard day.
@@ -112,9 +114,9 @@ public class IndexModel : PageModel
             if (!isRepeating)
             {
                 days = new List<int>
-    {
-        (int)startDate.DayOfWeek
-    };
+                {
+                    (int)startDate.DayOfWeek
+                };
             }
 
             // Make sure the selected date is valid.
@@ -171,6 +173,30 @@ public class IndexModel : PageModel
                 }
 
                 frequency = repeatFrequency;
+
+                // Monthly and longer schedules require
+                // a specific weekday occurrence.
+                bool needsOccurrence = isRepeating &&
+                    new[]
+                    {"Monthly", "Quarterly", "SemiAnnually", "Annually"}.Contains(frequency);
+
+                if (needsOccurrence)
+                {
+                    string[] allowedOccurrences = {"First", "Second", "Third", "Fourth", "Last"};
+
+                    if (weekOccurrence == null ||
+                        !allowedOccurrences.Contains(weekOccurrence))
+                    {
+                        Message = "Please select a valid week of the month.";
+                        return RedirectToPage(new { day });
+                    }
+                }
+                else
+                {
+                    // Weekly and one-time tasks don't need this.
+                    weekOccurrence = null;
+                }
+
             }
 
             // Create a task template for each selected weekday.
@@ -184,6 +210,7 @@ public class IndexModel : PageModel
                     DayOfWeek = selectedDay,
                     IsRepeating = isRepeating,
                     RepeatFrequency = frequency,
+                    WeekOccurrence = weekOccurrence,
                     StartDate = startDate,
                     IsActive = true
                 };
@@ -203,28 +230,106 @@ public class IndexModel : PageModel
                 return NotFound();
             }
 
+            // Validate the new start date.
+            if (startDate == default)
+            {
+                Message = "Please select a valid start date.";
+                return RedirectToPage(new { day });
+            }
+
+            // One-time tasks must stay on their
+            // originally selected weekday for now.
+
+            // Make sure the selected weekday is Monday-Friday.
+            if (!editDayOfWeek.HasValue ||
+                editDayOfWeek.Value < 1 ||
+                editDayOfWeek.Value > 5)
+            {
+                Message = "Please select a valid weekday.";
+                return RedirectToPage(new { day });
+            }
+
+            // Check the NEW repeating setting,
+            // not the task's previous setting.
+            if (!isRepeating &&
+                editDayOfWeek.Value != (int)startDate.DayOfWeek)
+            {
+                Message = "A one-time task must use the weekday " +
+                          "matching its start date.";
+
+                return RedirectToPage(new { day });
+            }
+
+            // Determine the new repeat frequency.
+            string newFrequency = "None";
+            string? newOccurrence = null;
+
+            if (isRepeating)
+            {
+                string[] allowedFrequencies =
+                {"Weekly", "Monthly", "Quarterly", "SemiAnnually", "Annually"};
+
+                if (string.IsNullOrWhiteSpace(repeatFrequency) ||
+                    !allowedFrequencies.Contains(repeatFrequency))
+                {
+                    Message = "Please select a valid repeat frequency.";
+                    return RedirectToPage(new { day });
+                }
+
+                newFrequency = repeatFrequency;
+
+                // Monthly and longer schedules require
+                // a weekday occurrence.
+                if (newFrequency != "Weekly")
+                {
+                    string[] allowedOccurrences =
+                    {"First", "Second", "Third", "Fourth", "Last"};
+
+                    if (string.IsNullOrWhiteSpace(weekOccurrence) ||
+                        !allowedOccurrences.Contains(weekOccurrence))
+                    {
+                        Message = "Please select a valid week of the month.";
+                        return RedirectToPage(new { day });
+                    }
+
+                    newOccurrence = weekOccurrence;
+                }
+            }
+
+            // Update the existing task information.
             task.TaskName = taskName;
             task.Shift = shift;
+            task.StartDate = startDate;
+            task.DayOfWeek = editDayOfWeek.Value;
 
-            // Existing schedule settings remain unchanged.
+            // Update the repeating schedule.
+            task.IsRepeating = isRepeating;
+            task.RepeatFrequency = newFrequency;
+            task.WeekOccurrence = newOccurrence;
 
-            // Keep unfinished tasks for today synchronized.
+            // Find today's unfinished records for this task.
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var todayTask = await _db.DailyTasks
-                .FirstOrDefaultAsync(t =>
+            var unfinishedTasks = await _db.DailyTasks
+                .Where(t =>
                     t.TaskTemplateId == id &&
                     t.ScheduledDate == today &&
-                    !t.IsCompleted);
+                    !t.IsCompleted)
+                .ToListAsync();
 
-            if (todayTask != null)
-            {
-                todayTask.TaskName = taskName;
-                todayTask.Shift = shift;
-            }
+            // Remove only today's unfinished records.
+            // The DailyTaskService will recreate the task
+            // if its updated schedule qualifies for today.
+            _db.DailyTasks.RemoveRange(unfinishedTasks);
         }
 
         await _db.SaveChangesAsync();
+
+        // After editing, show the task's new weekday.
+        if (id != 0 && editDayOfWeek.HasValue)
+        {
+            day = editDayOfWeek.Value;
+        }
 
         Message = "Task schedule saved successfully.";
 
