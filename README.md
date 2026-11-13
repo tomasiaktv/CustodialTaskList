@@ -1,591 +1,177 @@
 # CustodialTaskList
 
+**A touchscreen-friendly custodial task management system built with ASP.NET Core and SQLite.**
 
+CustodialTaskList replaces paper-based cleaning schedules with a shared daily task board. Custodians can view their responsibilities, record completed work using their initials, and undo accidental completions. Supervisors manage one-time and recurring schedules through a password-protected dashboard.
 
-### A Touchscreen-Friendly Custodial Task Management System
+The application is **deployed and operational** on a repurposed Windows 10 Pro touchscreen kiosk. It is hosted using IIS and is accessible through HTTPS to authorized devices on the organization's internal network. The kiosk and mobile browsers access the same application and SQLite database.
 
-
-
-CustodialTaskList is a web-based task management application developed using \*\*ASP.NET Core, C#, Razor Pages, JavaScript, and SQLite**.
-
-
-
-The application was designed to replace traditional paper-based cleaning schedules with an interactive digital system. It allows custodial staff to view daily responsibilities, mark tasks as completed, and track progress throughout their shifts.
-
-
-
-Originally developed as a practical solution for a workplace environment, the application has been deployed on a repurposed Windows touchscreen computer running Microsoft Edge in kiosk mode.
-
-
-
----
-
-
-
-## Project Overview
-
-
-
-CustodialTaskList provides a centralized platform for managing recurring and one-time custodial responsibilities.
-
-
-
-The application focuses on simplicity, accessibility, and usability, allowing employees to interact with the system using a touchscreen without requiring individual user accounts.
-
-
-
-Supervisors can manage scheduled tasks through a separate password-protected administration interface.
-
-
-
-### Project Goals
-
-
-
-- Replace paper-based custodial task schedules.
-
-- Provide a clear, interactive daily task list.
-
-- Support morning and evening work shifts.
-
-- Allow employees to record task completion using their initials.
-
-- Maintain completion records in a persistent database.
-
-- Reduce repetitive administrative work through automated scheduling.
-
-- Repurpose existing hardware instead of purchasing a dedicated kiosk system.
-
-
-
----
-
-
+> **Deployment note:** The workplace deployment and its internal DNS, certificates, network rules, credentials, and live database are not included in this repository. Windows 10 Pro reached its standard end of support in October 2025; organizations should plan a supported operating system or an IT-approved security-update arrangement for network-connected deployments.
 
 ## Features
 
+### Custodian task board
 
+- Shows tasks scheduled for the current day, separated into **Morning** and **Evening** shifts.
+- Selects the current shift automatically and allows manual switching.
+- Updates task information automatically (approximately every 10 seconds), so changes made from other devices appear without a full-page refresh.
+- Records task completion with employee initials and a completion timestamp.
+- Provides an **Undo Completion** action for tasks marked complete by mistake.
+- Displays completion status and progress for the selected shift.
+- Includes a touchscreen keyboard for entering initials.
 
-### Daily Task Management
+### Recurring schedules
 
+Supervisors can create tasks with a start date, shift, and selected weekday(s):
 
+| Schedule | Behavior |
+| --- | --- |
+| One-time | Runs on the chosen start date. |
+| Weekly | Runs every selected weekday beginning on or after the start date. |
+| Monthly | Runs on the **first, second, third, fourth, or last** occurrence of a selected weekday each month. |
+| Quarterly | Uses the selected weekday occurrence every three months, counted from the start month. |
+| Semiannually | Uses the selected weekday occurrence every six months, counted from the start month. |
+| Annually | Uses the selected weekday occurrence every twelve months, counted from the start month. |
 
-- Displays tasks scheduled for the current day.
+For example, a monthly task configured for **First + Monday** runs on the first Monday of each month—not on every Monday or the same numerical date each month. Multiple weekdays can be selected when creating a repeating task; each selected weekday is stored as a task template.
 
-- Separates responsibilities into Morning and Evening shifts.
+### Supervisor dashboard
 
-- Automatically selects the appropriate shift based on local time.
+- Password-protected Admin login.
+- **Morning / Evening** filter for the active tasks on the selected day.
+- Compact, read-only task cards showing the task name, shift, scheduled day, repeating status, and frequency.
+- **Edit Task** popup for updating task names, shifts, start dates, weekdays, recurrence, and weekday occurrence.
+- Create new tasks, deactivate individual templates, or remove all active task templates.
+- Review historical daily task records, including completed and incomplete tasks, initials, and completion times.
+- Touchscreen-friendly on-screen keyboard for entering the supervisor password and task names.
 
-- Allows employees to switch between shifts manually.
+Deactivating a task template stops future scheduling without intentionally deleting previous daily task history.
 
-- Displays task completion status and employee initials.
+### Kiosk and mobile access
 
-- Provides an option to undo accidental task completions.
+- Microsoft Edge runs in full-screen **Assigned Access** kiosk mode and opens the internal HTTPS site automatically.
+- The application is hosted by **Internet Information Services (IIS)** on the kiosk PC.
+- Internal DNS provides a consistent hostname; an HTTPS certificate is configured and trusted on the devices that need access.
+- Custodians on an authorized internal network can open the application in a phone browser and complete tasks using the same shared task list.
+- Supervisors can access the Admin interface from an authorized laptop or the kiosk.
+- Windows Firewall inbound access is scoped to the organization's approved internal network and the application service port, as coordinated with IT.
+- The live SQLite database and supervisor settings are stored separately from the published application files to preserve them across updates.
 
-- Shows a completion counter for each shift.
+**Network access is internal only.** The repository does not include the organization's actual hostname, IP addressing, firewall rules, or certificate/private-key material. This deployment is not intended to be exposed directly to the public internet.
 
+## Technology stack
 
+| Technology | Role |
+| --- | --- |
+| C# / ASP.NET Core (.NET 10) | Application, request handling, and scheduling logic |
+| Razor Pages | Server-rendered pages and Admin forms |
+| JavaScript | Shift selection, polling, task completion, and virtual keyboards |
+| HTML, CSS, Bootstrap | Responsive kiosk and mobile interface |
+| Entity Framework Core / SQLite | Task templates, daily records, and migrations |
+| IIS / ASP.NET Core Hosting Bundle | Windows application hosting |
+| Microsoft Edge Assigned Access | Full-screen touchscreen kiosk |
+| Visual Studio, Git, GitHub | Development and version control |
 
-### Automated Scheduling
+## Getting started (development)
 
+### Prerequisites
 
+- .NET 10 SDK.
+- Visual Studio with **ASP.NET and web development** support (or a compatible .NET editor).
+- A modern browser.
 
-Supervisors can configure tasks using several scheduling options:
+### Run locally
 
+1. Clone the repository and open the solution in Visual Studio.
+2. Select **CustodialTaskList** as the startup project.
+3. Configure a development supervisor password using the instructions below.
+4. Ensure your local SQLite connection string points to a writable development database, and apply the included EF Core migrations as needed.
+5. Run the project using its Development launch profile and open the local address shown by Visual Studio.
 
+The production database, real custodial task records, and production secrets are **not** supplied. A new development database will not automatically contain the workplace's tasks.
 
-- One-time tasks
+### Configure the development Admin password
 
-- Weekly tasks
+There is **no default Admin password included in this repository**. To choose your own password for local development:
 
-- Monthly tasks
+1. In Visual Studio, right-click the **CustodialTaskList** project (not the solution).
+2. Select **Manage User Secrets**.
+3. Add the following to `secrets.json`, replacing the placeholder with your own password:
 
-- Quarterly tasks
+   ```json
+   {
+     "Supervisor": {
+       "Password": "ChooseYourOwnDevelopmentPassword"
+     }
+   }
+   ```
 
-- Semiannual tasks
+4. Save the file, start the application in **Development** mode, and use your chosen password on the Admin login page.
 
-- Annual tasks
+ASP.NET Core User Secrets live outside the project directory, but **are not encrypted**. Use them for local development only, never commit them, and do not reuse a real production password.
 
+### Production supervisor password
 
+Production authentication uses the `Supervisor:PasswordHash` configuration setting, verified with ASP.NET Core's `PasswordHasher`. The solution includes a separate **SupervisorPasswordGenerator** console project for generating a compatible hash without entering the password in source code.
 
-Weekly tasks can be assigned to specific weekdays, allowing recurring schedules to be managed without manually recreating tasks.
+The production installation reads its supervisor settings from a protected file outside the published application directory. Keep the password hash and configuration file restricted to authorized administrators and the application identity. Do not put credentials or certificates with private keys in this repository or under `wwwroot`.
 
+## Architecture
 
-
-### Supervisor Administration
-
-
-
-A password-protected administration interface allows authorized supervisors to:
-
-
-
-- Create and manage custodial tasks.
-
-- Assign tasks to specific shifts.
-
-- Configure recurring schedules.
-
-- Review task completion history.
-
-- Deactivate active tasks.
-
-- Manage the daily task schedule.
-
-
-
-Supervisor credentials are protected using password hashing rather than plaintext password storage.
-
-### Setting Up the Development Admin Password
-
-CustodialTaskList requires a supervisor password to access
-the administration dashboard.
-
-The repository does not include a default password.
-
-To configure your own password for local development:
-
-1. Open the solution in Visual Studio.
-2. Right-click the CustodialTaskList project.
-3. Select "Manage User Secrets".
-4. Add the following configuration:
-
-```json
-{
-  "Supervisor": {
-    "Password": "YourChosenPassword"
-  }
-}
+```text
+                  Authorized internal network
+                  (HTTPS / internal DNS)
+                             |
+             +---------------+---------------+
+             |                               |
+       Kiosk Edge browser              Phone / laptop
+             |                               |
+             +---------------+---------------+
+                             |
+                      IIS / ASP.NET Core
+                             |
+                    Razor Pages + services
+                             |
+                        EF Core / SQLite
+                             |
+                     Task and history data
 ```
 
-5. Save the file.
-6. Run the application in Development mode.
-7. Select Admin and log in with your chosen password.
+The host runs one central application and database. Phone and laptop access does not require additional copies of SQLite on client devices.
 
-User Secrets are stored outside the project directory
-and should not be committed to GitHub.
+## Deployment overview
 
-For production deployments, configure
-Supervisor:PasswordHash using ASP.NET Core PasswordHasher.
-Do not use plaintext passwords in production.
+The deployed system uses a **folder publish** of the ASP.NET Core application, transferred to the Windows kiosk and hosted through IIS with the appropriate ASP.NET Core Hosting Bundle.
 
+A typical update workflow is:
 
+1. Back up the live SQLite database and retain a rollback copy of the installed application.
+2. Make code changes locally, build, and publish a **Release** version.
+3. Commit and push source changes to GitHub.
+4. Stop the dedicated IIS application pool during the maintenance window.
+5. Replace the published application files **without overwriting the production database or supervisor configuration**.
+6. Apply required Entity Framework Core migrations carefully and restart the application pool.
+7. Verify Admin login, the daily task board, scheduling, task history, and mobile access.
 
-### Touchscreen Support
+Database files should not be edited while the running application is actively writing to them. Back up the database before schema changes or manual SQLite maintenance.
 
+## Security and configuration
 
+This public repository does **not** include:
 
-The interface was designed for interaction with a touchscreen kiosk.
+- The live SQLite database or employee completion history.
+- Supervisor passwords, production password hashes, or User Secrets.
+- HTTPS certificate private keys or `.pfx`/`.p12` credentials.
+- Internal DNS, static IP, or organization-specific firewall configuration.
 
+The actual deployment is restricted to the authorized internal network. HTTPS certificate trust and firewall scope are managed in coordination with the organization's IT team. Production installations should use supported operating systems and appropriate backup, access-control, and patching practices.
 
+## Project status
 
-Features include:
+**Deployed and operational.** The core kiosk workflow, internal phone access, supervisor management, weekday-occurrence scheduling, task history, and touchscreen editing are implemented. Future improvements, if needed, could include richer reports, history search/filtering, and more detailed task audit records.
 
+## About
 
+CustodialTaskList is an independent software development project created to solve a practical workplace scheduling problem while developing hands-on experience in full-stack .NET development, database design, responsive UI, authentication, Windows/IIS deployment, and internal-network hosting.
 
-- Large, accessible buttons.
-
-- Responsive layouts.
-
-- Touchscreen-friendly task completion controls.
-
-- On-screen keyboard for entering employee initials.
-
-- Draggable virtual keyboard for administrative input.
-
-- Simplified navigation.
-
-
-
-### Automatic Updates
-
-
-
-The application retrieves updated task information from the server every 10 seconds.
-
-
-
-This allows task completion and administrative changes to appear without manually refreshing the webpage.
-
-
-
-The application also automatically switches between scheduled shifts:
-
-
-
-| Time | Displayed Shift |
-
-|---|---|
-
-| 6:00 AM – 1:59 PM | Morning |
-
-| 2:00 PM – 9:59 PM | Evening |
-
-| 10:00 PM – 5:59 AM | Morning (Default) |
-
-
-
-### Kiosk Deployment
-
-
-
-The application has been deployed on a repurposed Windows 11 touchscreen computer.
-
-
-
-The deployment uses:
-
-
-
-- Internet Information Services (IIS)
-
-- ASP.NET Core Hosting Bundle
-
-- Microsoft Edge kiosk mode
-
-- Windows Assigned Access
-
-- Automatic kiosk account sign-in
-
-- Windows Bubbles screen saver
-
-- Persistent SQLite database storage
-
-
-
-The kiosk launches the application automatically after startup, providing a dedicated task management interface.
-
-
-
----
-
-
-
-## Technologies Used
-
-
-
-| Technology | Purpose |
-
-|---|---|
-
-| C# | Server-side application logic |
-
-| ASP.NET Core (.NET 10) | Web application framework |
-
-| Razor Pages | Server-rendered web interface |
-
-| JavaScript | Client-side interactions and automatic updates |
-
-| HTML5 | Application structure |
-
-| CSS3 | Custom styling and layout |
-
-| Bootstrap | Responsive interface components |
-
-| SQLite | Persistent task and completion data |
-
-| Microsoft IIS | Windows web hosting |
-
-| Microsoft Edge | Touchscreen kiosk browser |
-
-| Visual Studio | Development environment |
-
-| Git / GitHub | Source control and project documentation |
-
-
-
----
-
-
-
-## Application Workflow
-
-
-
-### Employee Workflow
-
-
-
-1. Open the application on the touchscreen kiosk.
-
-2. View the currently scheduled shift and daily responsibilities.
-
-3. Select \*\*Complete\*\* for a finished task.
-
-4. Enter employee initials using the on-screen keyboard.
-
-5. Submit the completion.
-
-6. View the updated completion status.
-
-
-
-If a task is completed accidentally, the employee can use the Undo Completion option.
-
-
-
-### Supervisor Workflow
-
-
-
-1. Navigate to the administration page.
-
-2. Authenticate using the supervisor password.
-
-3. Create a new task.
-
-4. Assign the task to a shift.
-
-5. Configure its start date and recurrence schedule.
-
-6. Save the task.
-
-7. Review the task list and completion history.
-
-
-
----
-
-
-
-## Application Architecture
-
-
-
-CustodialTaskList uses a server-side web architecture with client-side JavaScript for interactive features.
-
-
-
-**Frontend:** Razor Pages, HTML, CSS, Bootstrap, and JavaScript provide the user interface.
-
-
-
-**Backend:** ASP.NET Core handles application requests, scheduling logic, task management, and database operations.
-
-
-
-**Database:** SQLite stores task definitions and completion information.
-
-
-
-**Hosting:** IIS hosts the application on a Windows computer, allowing the kiosk browser to communicate with the locally hosted application.
-
-
-
-**Client Updates:** JavaScript periodically requests updated task information, allowing the interface to reflect database changes without requiring a full-page refresh.
-
-
-
----
-
-
-
-## Development and Deployment
-
-
-
-The application was developed in Visual Studio using ASP.NET Core and .NET 10.
-
-
-
-During development, it can be launched through Visual Studio using the configured development profile.
-
-
-
-For deployment, the application is published and hosted using IIS with the appropriate ASP.NET Core runtime.
-
-
-
-The production environment stores operational data and supervisor settings separately from the published application files.
-
-
-
-### Requirements
-
-
-
-- .NET 10 SDK for development
-
-- Visual Studio with ASP.NET and web development tools, or another compatible .NET development environment
-
-- SQLite database support
-
-- A modern web browser
-
-- IIS and the ASP.NET Core Hosting Bundle for the Windows IIS deployment scenario
-
-
-
-### Security and Configuration
-
-
-
-This repository is intended to contain application source code only.
-
-
-
-The following production resources are not included:
-
-
-
-- Operational SQLite databases
-
-- Employee task-completion records
-
-- Supervisor password configuration
-
-- Authentication keys
-
-- Production-specific network settings
-
-- Environment-specific secrets
-
-
-
-Deployment environments must supply their own configuration and initialize their own application data.
-
-
-
----
-
-
-
-## Design Considerations
-
-
-
-Several design decisions were made specifically for a workplace touchscreen environment.
-
-
-
-**Accessibility:** Large controls and clear labels simplify interaction for employees with varying levels of technical experience.
-
-
-
-**Reliability:** Persistent database storage and automatic browser startup help maintain consistent availability.
-
-
-
-**Maintainability:** Recurring task schedules reduce the need for supervisors to manually update daily responsibilities.
-
-
-
-**Hardware Reuse:** The application provides a practical use for an existing touchscreen computer that would otherwise remain unused.
-
-
-
-**Security:** A separate administration interface and password hashing protect supervisory functions.
-
-
-
-**Usability:** On-screen keyboards allow the application to operate without a physical keyboard during normal use.
-
-
-
----
-
-
-
-## Future Improvements
-
-
-
-Potential future enhancements include:
-
-
-
-- Secure HTTPS access using an internal network hostname.
-
-- Access from authorized devices on the organization's local network.
-
-- Additional administrative reporting.
-
-- Task completion summaries and statistics.
-
-- Improved filtering and searching of historical task records.
-
-- Additional scheduling and notification capabilities.
-
-
-
----
-
-
-
-## Project Status
-
-
-
-**Status: Deployed and Operational**
-
-
-
-The application is operational on a Windows 11 touchscreen kiosk.
-
-
-
-Additional network configuration and enhancements are planned.
-
-
-
----
-
-
-
-## About This Project
-
-
-
-CustodialTaskList was developed as an independent software development project focused on solving a practical workplace problem.
-
-
-
-The project demonstrates experience with:
-
-
-
-- Full-stack web application development
-
-- C# and ASP.NET Core
-
-- Relational database integration
-
-- JavaScript and interactive user interfaces
-
-- Authentication and application security
-
-- Recurring scheduling logic
-
-- Windows application deployment
-
-- IIS configuration
-
-- Touchscreen kiosk implementation
-
-- Practical software troubleshooting
-
-
-
-The goal was to create a useful, maintainable application while gaining hands-on experience with the complete software development lifecycle, from initial design through deployment.
-
-
-
----
-
-
-
-## Author
-
-
-
-**Ian Tomasiak**
-
-
-
-Computer Science Student
-
-
-
-Developed as a practical application of software engineering, web development, and system deployment concepts.
-
+**Author:** Ian Tomasiak — Computer Science Student
