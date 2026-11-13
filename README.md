@@ -6,7 +6,7 @@
 
 
 
-CustodialTaskList is a web-based task management application developed using \*\*ASP.NET Core, C#, Razor Pages, JavaScript, and SQLite\*\*.
+CustodialTaskList is a web-based task management application developed using \*\*ASP.NET Core, C#, Razor Pages, JavaScript, and SQLite**.
 
 
 
@@ -135,6 +135,39 @@ A password-protected administration interface allows authorized supervisors to:
 
 
 Supervisor credentials are protected using password hashing rather than plaintext password storage.
+
+### Setting Up the Development Admin Password
+
+CustodialTaskList requires a supervisor password to access
+the administration dashboard.
+
+The repository does not include a default password.
+
+To configure your own password for local development:
+
+1. Open the solution in Visual Studio.
+2. Right-click the CustodialTaskList project.
+3. Select "Manage User Secrets".
+4. Add the following configuration:
+
+```json
+{
+  "Supervisor": {
+    "Password": "YourChosenPassword"
+  }
+}
+```
+
+5. Save the file.
+6. Run the application in Development mode.
+7. Select Admin and log in with your chosen password.
+
+User Secrets are stored outside the project directory
+and should not be committed to GitHub.
+
+For production deployments, configure
+Supervisor:PasswordHash using ASP.NET Core PasswordHasher.
+Do not use plaintext passwords in production.
 
 
 
