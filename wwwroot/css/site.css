@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -280,4 +280,31 @@ body {
     .modal-dialog-scrollable .modal-content {
         max-height: 95dvh;
     }
+}
+/* Task location: visible but secondary to the task action. */
+.task-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.task-card-header h5 { flex: 1 1 auto; min-width: 0; margin-bottom: .75rem; }
+.task-room {
+    flex: 0 1 48%;
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+.task-room-label {
+    display: block;
+    color: #6c757d;
+    font-size: .8rem;
+    font-weight: 500;
+    line-height: 1.3;
+}
+.task-room-value {
+    display: block;
+    color: #212529;
+    font-size: 1rem;
+    line-height: 1.4;
 }

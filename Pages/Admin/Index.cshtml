@@ -149,6 +149,10 @@
                     }
                 </div>
 
+                <div class="col-12">
+                    <small class="text-muted d-block">Room</small>
+                    <strong>@(string.IsNullOrWhiteSpace(task.Room) ? "Not specified" : task.Room)</strong>
+                </div>
             </div>
 
             <button type="button"
@@ -205,6 +209,12 @@
                                    value="@task.TaskName"
                                    maxlength="150"
                                    required
+                                   class="form-control admin-keyboard-input" />
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Room</label>
+                            <input name="room" value="@task.Room" maxlength="150"
+                                   placeholder="Enter room name or number"
                                    class="form-control admin-keyboard-input" />
                         </div>
 
@@ -403,6 +413,13 @@
                    maxlength="150"
                    required
                    placeholder="Example: Clean Main Lobby" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Room</label>
+            <input name="room" maxlength="150"
+                   placeholder="Enter room name or number"
+                   class="form-control admin-keyboard-input" />
         </div>
 
         <div class="mb-3">

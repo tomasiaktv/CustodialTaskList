@@ -10,6 +10,9 @@ namespace CustodialTaskList.Models
         [MaxLength(150)]
         public string TaskName { get; set; } = "";
 
+        [MaxLength(150)]
+        public string? Room { get; set; }
+
         [Required]
         [MaxLength(20)]
         public string Shift { get; set; } = "Morning";

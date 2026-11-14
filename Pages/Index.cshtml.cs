@@ -1,4 +1,4 @@
-
+﻿
 using CustodialTaskList.Data;
 using CustodialTaskList.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +38,7 @@ public class IndexModel : PageModel
         {
             id = t.Id,
             name = t.TaskName,
+            room = t.Room,
             completed = t.IsCompleted,
             initials = t.CompletedByInitials,
             completedAt = t.CompletedAt?

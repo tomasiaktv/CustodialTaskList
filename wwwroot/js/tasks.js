@@ -86,7 +86,23 @@ function renderTasks() {
 
         const heading = document.createElement("h5");
         heading.textContent = task.name;
-        body.appendChild(heading);
+        const header = document.createElement("div");
+        header.className = "task-card-header";
+        header.appendChild(heading);
+
+        if (task.room && task.room.trim()) {
+            const roomBlock = document.createElement("div");
+            roomBlock.className = "task-room";
+            const roomLabel = document.createElement("span");
+            roomLabel.className = "task-room-label";
+            roomLabel.textContent = "Room";
+            const roomValue = document.createElement("strong");
+            roomValue.className = "task-room-value";
+            roomValue.textContent = task.room;
+            roomBlock.append(roomLabel, roomValue);
+            header.appendChild(roomBlock);
+        }
+        body.appendChild(header);
 
 
         if (task.completed) {

@@ -33,6 +33,10 @@ namespace CustodialTaskList.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Room")
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateOnly>("ScheduledDate")
                         .HasColumnType("TEXT");
 
@@ -76,6 +80,10 @@ namespace CustodialTaskList.Migrations
 
                     b.Property<string>("RepeatFrequency")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Room")
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Shift")

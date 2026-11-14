@@ -1,4 +1,4 @@
-
+﻿
 using CustodialTaskList.Data;
 using CustodialTaskList.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -77,6 +77,7 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostSaveAsync(
     int id,
     string taskName,
+    string? room,
     string shift,
     int day,
     List<int>? selectedDays,
@@ -92,6 +93,12 @@ public class IndexModel : PageModel
             return BadRequest();
 
         taskName = taskName?.Trim() ?? "";
+        room = string.IsNullOrWhiteSpace(room) ? null : room.Trim();
+        if (room?.Length > 150)
+        {
+            TempData["Message"] = "Room must be 150 characters or fewer.";
+            return RedirectToPage(new { day });
+        }
 
         // Make sure the task name and shift are valid.
         if (string.IsNullOrWhiteSpace(taskName) ||
@@ -206,6 +213,7 @@ public class IndexModel : PageModel
                 var newTask = new TaskTemplate
                 {
                     TaskName = taskName,
+                    Room = room,
                     Shift = shift,
                     DayOfWeek = selectedDay,
                     IsRepeating = isRepeating,
@@ -298,6 +306,7 @@ public class IndexModel : PageModel
 
             // Update the existing task information.
             task.TaskName = taskName;
+            task.Room = room;
             task.Shift = shift;
             task.StartDate = startDate;
             task.DayOfWeek = editDayOfWeek.Value;

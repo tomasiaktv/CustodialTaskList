@@ -149,6 +149,7 @@ public class DailyTaskService
             {
                 TaskTemplateId = template.Id,
                 TaskName = template.TaskName,
+                Room = template.Room,
                 Shift = template.Shift,
                 ScheduledDate = today,
                 IsCompleted = false
