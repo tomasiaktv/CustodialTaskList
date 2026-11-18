@@ -190,7 +190,7 @@ function buildKeyboard() {
                 const input =
                     document.getElementById("employeeInitials");
 
-                if (input.value.length < 4) {
+                if (input.value.length < 5) {
                     input.value += letter;
                 }
             });
@@ -213,7 +213,37 @@ function buildKeyboard() {
         input.value = input.value.slice(0, -1);
     });
 
-    keyboard.appendChild(backspace);
+    // Create a bottom row for Backspace and &.
+    const bottomRow = document.createElement("div");
+    bottomRow.className = "d-flex align-items-center mt-2";
+    bottomRow.style.position = "relative";
+    bottomRow.style.minHeight = "48px";
+
+    // Backspace stays on the left.
+    bottomRow.appendChild(backspace);
+
+    // Create the & button.
+    const andSymbol = document.createElement("button");
+    andSymbol.type = "button";
+    andSymbol.className = "btn btn-outline-dark keyboard-key";
+    andSymbol.textContent = "&";
+    andSymbol.style.minWidth = "65px"
+
+    // Center the & button horizontally.
+    andSymbol.style.position = "absolute";
+    andSymbol.style.left = "50%";
+    andSymbol.style.transform = "translateX(-50%)";
+
+    andSymbol.addEventListener("click", () => {
+        const input = document.getElementById("employeeInitials");
+
+        if (input.value.length < 5 && !input.value.includes("&")) {
+            input.value += "&";
+        }
+    });
+
+    bottomRow.appendChild(andSymbol);
+    keyboard.appendChild(bottomRow);
 }
 
 // Submit task completion to SQLite through C#.
