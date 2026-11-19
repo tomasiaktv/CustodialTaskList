@@ -23,7 +23,7 @@ namespace CustodialTaskList.Models
 
         public bool IsCompleted { get; set; } = false;
 
-        [MaxLength(4)]
+        [MaxLength(5)]
         public string? CompletedByInitials { get; set; }
 
         public DateTimeOffset? CompletedAt { get; set; }

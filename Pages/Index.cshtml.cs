@@ -53,8 +53,8 @@ public class IndexModel : PageModel
     {
         initials = (initials ?? "").Trim().ToUpperInvariant();
 
-        if (!Regex.IsMatch(initials, "^[A-Z]{1,4}$"))
-            return BadRequest("Enter 1 to 4 letters.");
+        if (!Regex.IsMatch(initials, @"^(?:[A-Z]{1,4}|[A-Z]{1,2}&[A-Z]{1,2})$"))
+            return BadRequest("Enter valid initials, such as AB or AB&CD.");
 
         var task = await _db.DailyTasks
             .FirstOrDefaultAsync(t =>

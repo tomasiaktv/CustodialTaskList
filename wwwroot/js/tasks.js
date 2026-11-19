@@ -254,7 +254,7 @@ async function confirmCompletion() {
         .getElementById("employeeInitials")
         .value.trim();
 
-    if (!/^[A-Z]{1,4}$/.test(initials)) {
+    if (!/^(?:[A-Z]{1,4}|[A-Z]{1,2}&[A-Z]{1,2})$/.test(initials)) {
         alert("Please enter your initials.");
         return;
     }
